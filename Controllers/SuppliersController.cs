@@ -21,14 +21,14 @@ namespace Warehouse_Management_System.Controllers
         }
 
         // GET: api/Suppliers
-        [HttpGet]
+        [HttpGet("Get all suppliers")]
         public async Task<ActionResult<IEnumerable<Supplier>>> GetSuppliers()
         {
             return await _context.Suppliers.ToListAsync();
         }
 
         // GET: api/Suppliers/5
-        [HttpGet("{id}")]
+        [HttpGet("{id} Get supplier by ID")]
         public async Task<ActionResult<Supplier>> GetSupplier(int id)
         {
             var supplier = await _context.Suppliers.FindAsync(id);
