@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using Warehouse_Management_System.Models;
+
 namespace Warehouse_Management_System
 {
     public class Program
@@ -14,6 +17,7 @@ namespace Warehouse_Management_System
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<WarehouseManagementSystemContext>(options => options.UseSqlServer("Server=Dorsa\\SQLEXPRESS;Database=WarehouseManagementSystem;Trusted_Connection=True;TrustServerCertificate=True;"));
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
