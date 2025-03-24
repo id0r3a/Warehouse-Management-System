@@ -21,14 +21,14 @@ namespace Warehouse_Management_System.Controllers
         }
 
         // GET: api/Stocks
-        [HttpGet("Get whole stock")]
+        [HttpGet("GetWholeStock")]
         public async Task<ActionResult<IEnumerable<Stock>>> GetStocks()
         {
             return await _context.Stocks.ToListAsync();
         }
 
         // GET: api/Stocks/5
-        [HttpGet("{id} Get stock by ID")]
+        [HttpGet("{id} GetStockByID")]
         public async Task<ActionResult<Stock>> GetStock(int id)
         {
             var stock = await _context.Stocks.FindAsync(id);
