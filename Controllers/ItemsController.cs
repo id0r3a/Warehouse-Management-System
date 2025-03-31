@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Warehouse_Management_System.DTOs;
 using Warehouse_Management_System.Models;
 
 namespace Warehouse_Management_System.Controllers
@@ -14,22 +16,25 @@ namespace Warehouse_Management_System.Controllers
     public class ItemsController : ControllerBase
     {
         private readonly WarehouseManagementSystemContext _context;
+        private readonly IMapper _mapper;
 
-        public ItemsController(WarehouseManagementSystemContext context)
+        public ItemsController(WarehouseManagementSystemContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Items
         [HttpGet("GetAllItems")]
-        public async Task<ActionResult<IEnumerable<Item>>> GetItems()
+        public async Task<ActionResult<IEnumerable<ItemDTO>>> GetItems()
         {
-            return await _context.Items.ToListAsync();
+            var items = await _context.Items.ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<ItemDTO>>(items));
         }
 
         // GET: api/Items/5
-        [HttpGet("{id}GetItemByID")]
-        public async Task<ActionResult<Item>> GetItem(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ItemDTO>> GetItem(int id)
         {
             var item = await _context.Items.FindAsync(id);
 
@@ -38,19 +43,30 @@ namespace Warehouse_Management_System.Controllers
                 return NotFound();
             }
 
-            return item;
+            return Ok(_mapper.Map<ItemDTO>(item));
+        }
+
+        // POST: api/Items
+        [HttpPost]
+        public async Task<ActionResult<ItemDTO>> PostItem(ItemDTO itemDto)
+        {
+            var item = _mapper.Map<Item>(itemDto);
+            _context.Items.Add(item);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetItem), new { id = item.ItemId }, _mapper.Map<ItemDTO>(item));
         }
 
         // PUT: api/Items/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutItem(int id, Item item)
+        public async Task<IActionResult> PutItem(int id, ItemDTO itemDto)
         {
-            if (id != item.ItemId)
+            if (id != itemDto.ItemId)
             {
                 return BadRequest();
             }
 
+            var item = _mapper.Map<Item>(itemDto);
             _context.Entry(item).State = EntityState.Modified;
 
             try
@@ -70,17 +86,6 @@ namespace Warehouse_Management_System.Controllers
             }
 
             return NoContent();
-        }
-
-        // POST: api/Items
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Item>> PostItem(Item item)
-        {
-            _context.Items.Add(item);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetItem", new { id = item.ItemId }, item);
         }
 
         // DELETE: api/Items/5

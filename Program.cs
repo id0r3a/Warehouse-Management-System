@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using Warehouse_Management_System.Mappers;
 using Warehouse_Management_System.Models;
 
 namespace Warehouse_Management_System
@@ -18,6 +19,10 @@ namespace Warehouse_Management_System
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<WarehouseManagementSystemContext>(options => options.UseSqlServer("Server=Dorsa\\SQLEXPRESS;Database=WarehouseManagementSystem;Trusted_Connection=True;TrustServerCertificate=True;"));
+            
+            // Lägg till AutoMapper i services
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
